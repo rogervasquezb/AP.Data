@@ -1,4 +1,5 @@
 ﻿using AP.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace AP.Data.Repository;
@@ -27,26 +28,31 @@ public class Repository<T> : IRepository<T> where T : class
 
     public bool Delete(int id)
     {
-        throw new NotImplementedException();
+        _context.Remove(id);
+        _context.SaveChanges();
+        return true;
     }
 
     public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
     {
-        throw new NotImplementedException();
+        return _context.Set<T>().Where(predicate).ToList();
     }
 
     public IEnumerable<T> GetAll()
     {
-        throw new NotImplementedException();
+        return _context.Set<T>().ToList();
     }
 
     public T GetById(int id)
     {
-        throw new NotImplementedException();
+        return _context.Set<T>().Find(id);
     }
 
     public T Update(T entity)
     {
-        throw new NotImplementedException();
+        _context.Set<T>().Attach(entity);
+        _context.Entry(entity).State = EntityState.Modified;
+        _context.SaveChanges();
+        return entity;
     }
 }
